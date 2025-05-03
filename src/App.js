@@ -1,23 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+// import NavBar from './components/NavBar'; // Import the NavBar
+import Home from "./pages/Home"; // Home component for the main page
+import Trending from './pages/Trending';
+import Browse from './pages/Browse';
+import Upcoming from './pages/Upcoming';
+import WatchLater from './pages/WatchLater';
+import NavBar from './components/Navbar'; // Import the NavBar
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <NavBar />  {/* Display the Navbar */}
+        
+        {/* Define your routes */}
+        <Routes>
+          {/* This route makes Home the default page when the app loads */}
+          <Route path="/" element={<Home />} /> 
+          <Route path="/trending" element={<Trending />} />
+          <Route path="/browse" element={<Browse />} />
+          <Route path="/upcoming-movies" element={<Upcoming />} />
+          <Route path="/watch-later" element={<WatchLater />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
