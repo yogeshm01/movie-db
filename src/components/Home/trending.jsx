@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import MovieCard from "../movieCard";
+
 const API_KEY = process.env.REACT_APP_TMDB_KEY;
+
 function Trending() {
     const [trending, setTrending] = useState([]);
     const [error, setError] = useState(null);
@@ -36,7 +39,7 @@ function Trending() {
     return (
         <>
             {/* Heading */}
-            < div className="flex justify-center items-center mt-14" >
+            < div className="flex justify-center items-center mt-14 pt-8" >
                 <h1 className="text-3xl font-bold text-[#00FFFF] p-4">Trending Movies</h1>
             </div >
 
@@ -46,11 +49,19 @@ function Trending() {
                     error ? (
                         <p className="text-red-500 px-4" > {error}</p>
                     ) : (
-                        <div className="flex overflow-x-auto space-x-4 px-4 py-6">
+                        <div className="flex justify-center py-6">
                             {trending.length > 0 ? (
-                                trending.map((movie) => (
-                                    <MovieCard key={movie.id} movie={movie} />
-                                ))
+                                <div className="flex space-x-4">
+                                    {trending.slice(0, 5).map((movie) => (
+                                        <MovieCard key={movie.id} movie={movie} />
+                                    ))}
+                                    <Link to="/trending">
+                                        <div className="w-[180px] h-[400px] bg-gray-800 text-white flex items-center justify-center rounded-lg cursor-pointer hover:bg-cyan-700 transition duration-300 shadow-md">
+                                            <span className="text-lg font-semibold text-center px-4">See More</span>
+                                        </div>
+                                    </Link>
+
+                                </div>
                             ) : (
                                 <p>Loading movies...</p>
                             )}

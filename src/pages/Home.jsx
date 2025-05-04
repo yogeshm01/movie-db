@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import Trending from "../components/Home/trending";
 import Browse from "../components/Home/browse";
 import Upcoming from "../components/Home/upcoming";
-
+import Footer from "../components/Footer/footer";
 
 
 const Home = () => {
@@ -29,6 +29,9 @@ const Home = () => {
         <Upcoming />
       </div>
 
+      <div>
+        <Footer />
+      </div>
 
     </div>
 
