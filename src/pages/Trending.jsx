@@ -61,11 +61,13 @@ function Trending() {
   };
 
   return (
-      <div className="min-h-screen bg-[#0d0d0d] text-white px-6 py-10">
-          <h1 className="text-4xl font-bold text-cyan-400 text-center mb-6 pt-11">Trending Movies</h1>
+      <div className="min-h-screen bg-[#0d0d0d] text-white px-6 py-10 sm:px-4 md:px-6 lg:px-10">
+          <h1 className="text-4xl font-bold text-cyan-400 text-center mb-6 pt-11 sm:text-3xl md:text-4xl lg:text-5xl">
+              Trending Movies
+          </h1>
 
           {/* Filter Chips */}
-          <div className="flex justify-center space-x-4 mb-8">
+          <div className="flex justify-center space-x-4 mb-8 flex-wrap">
               {["day", "week"].map((window) => (
                   <button
                       key={window}
@@ -85,7 +87,8 @@ function Trending() {
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
           {/* Movie Cards */}
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-6 gap-x-0">
+
               {movies.map((movie) => (
                   <MovieCard key={movie.id} movie={movie} />
               ))}

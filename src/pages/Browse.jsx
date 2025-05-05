@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import MovieCard from "../components/movieCard";
 
 const API_KEY = process.env.REACT_APP_TMDB_KEY;
 
@@ -37,8 +38,8 @@ const Browse = () => {
   }, [selectedGenre, sortBy]);
 
   return (
-    <div className="bg-[#111] min-h-screen text-white p-4">
-      <h1 className="text-3xl font-bold text-[#00FFFF] mb-7 text-center pt-12 mt-8">
+    <div className="bg-[#111] min-h-screen text-white px-6 py-10">
+      <h1 className="text-4xl font-bold text-cyan-400 text-center mb-6 pt-11 sm:text-3xl md:text-4xl lg:text-5xl">
         Browse Movies
       </h1>
 
@@ -53,7 +54,7 @@ const Browse = () => {
             className={`px-4 py-2 rounded-full text-sm transition ${
               selectedGenre === genre.id
                 ? "bg-cyan-400 text-black"
-                : "bg-gray-600"
+                : "bg-gray-600 text-white hover:bg-cyan-600"
             }`}
           >
             {genre.name}
@@ -76,28 +77,11 @@ const Browse = () => {
         </select>
       </div>
 
-      {/* Movie Grid */}
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-center">
+      {/* Movie Grid with MovieCard component */}
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 justify-center pl-3">
         {movies.length > 0 ? (
           movies.map((movie) => (
-            <div
-              key={movie.id}
-              className="bg-gray-800 rounded-lg overflow-hidden shadow-lg"
-            >
-              <img
-                src={
-                  movie.poster_path
-                    ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-                    : "https://via.placeholder.com/300x450?text=No+Image"
-                }
-                alt={movie.title}
-                className="w-full h-[360px] object-cover"
-              />
-              <div className="p-3">
-                <h3 className="text-md font-semibold">{movie.title}</h3>
-                <p className="text-sm text-gray-400">{movie.release_date}</p>
-              </div>
-            </div>
+            <MovieCard key={movie.id} movie={movie} />
           ))
         ) : (
           <p className="text-center col-span-full">No movies found.</p>

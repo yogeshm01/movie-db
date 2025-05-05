@@ -7,7 +7,7 @@ import Browse from './pages/Browse';
 import Upcoming from './pages/Upcoming';
 import WatchLater from './pages/WatchLater';
 import NavBar from './components/Navbar'; // Import the NavBar
-import MovieDetail from "./pages/MovieDetail";
+// import MovieDetail from "./pages/MovieDetail";
 import SearchBar from "./components/SearchBar"; // Import the SearchBar
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
           <Route path="/browse" element={<Browse />} />
           <Route path="/upcoming-movies" element={<Upcoming />} />
           <Route path="/watch-later" element={<WatchLater />} />
-          <Route path="/movie/:id" element={<MovieDetail />} />
+          {/* <Route path="/movie/:id" element={<MovieDetail />} /> */}
           <Route path="/search" element={<SearchBar />} />
           {/* Add more routes as needed */}
 
