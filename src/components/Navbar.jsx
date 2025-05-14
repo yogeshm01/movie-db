@@ -24,7 +24,7 @@ function NavBar() {
                 <Link to="/" className="flex items-center no-underline text-cyan-300 text-xl font-bold">
                     <img
                         src="assets/MovieDB4.png"
-                        alt="Movie DB Logo"
+                        alt="Movie"
                         className="w-[40px] md:w-[60px] h-auto rounded-md mr-2"
                     />
                 </Link>
