@@ -97,27 +97,25 @@ function Browse() {
             </div>
 
             {/* Movie Cards List */}
-            <div className="flex-1">
+            <div className="w-full flex justify-center">
                 {error ? (
                     <p className="text-red-500 px-4">{error}</p>
                 ) : (
-                    <div className="flex justify-center py-6">
-                        {movies.length > 0 ? (
-                            movies.slice(0,5).map((movie) => (
+                    <div className="overflow-x-auto max-w-7xl px-4 py-6">
+                        <div className="flex gap-4 w-max mx-auto">
+                            {movies.slice(0, 10).map((movie) => (
                                 <MovieCard key={movie.id} movie={movie} />
-                            ))
-                            
-                        ) : (
-                            <p>Loading movies...</p>
-                        )}
-                        <Link to="/upcoming-movies">
-                            <div className="w-[180px] h-[400px] bg-gray-800 text-white flex items-center justify-center rounded-lg cursor-pointer hover:bg-cyan-700 transition duration-300 shadow-md">
-                                <span className="text-lg font-semibold text-center px-4">See More</span>
-                            </div>
-                        </Link>
+                            ))}
+                            <Link to="/upcoming-movies">
+                                <div className="min-w-[180px] h-[400px] bg-gray-800 text-white flex items-center justify-center rounded-lg cursor-pointer hover:bg-cyan-700 transition duration-300 shadow-md">
+                                    <span className="text-lg font-semibold text-center px-4">See More</span>
+                                </div>
+                            </Link>
+                        </div>
                     </div>
+
                 )}
-            </div>
+        </div >
         </>
     );
 }
