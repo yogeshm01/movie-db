@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MovieCard from "../components/movieCard";
+import dayjs from "dayjs";
 
 const API_KEY = process.env.REACT_APP_TMDB_KEY;
 const AUTH = process.env.REACT_APP_TMDB_AUTHORIZATION;
@@ -12,9 +13,8 @@ function Upcoming() {
     const [loading, setLoading] = useState(false);
 
     const [filters, setFilters] = useState({
-        month: "",
-        adult: "",
-        language: "",
+        monthYear: "",
+        sortBy: "popularity", // default
     });
 
     const fetchMovies = async (pageNum = 1) => {
@@ -51,13 +51,27 @@ function Upcoming() {
     };
 
     const applyFilters = (movieList, filterState) => {
-        return movieList.filter((movie) => {
-            const releaseMonth = movie.release_date?.split("-")[1];
-            const matchesMonth = filterState.month ? releaseMonth === filterState.month : true;
-            const matchesAdult = filterState.adult ? (filterState.adult === "Yes") === movie.adult : true;
-            const matchesLang = filterState.language ? movie.original_language === filterState.language : true;
-            return matchesMonth && matchesAdult && matchesLang;
+        const today = dayjs();
+
+        let filtered = movieList.filter((movie) => {
+            const releaseDate = dayjs(movie.release_date);
+            return releaseDate.isValid() && !releaseDate.isBefore(today, "day");
         });
+
+        if (filterState.monthYear) {
+            filtered = filtered.filter((movie) => {
+                const [year, month] = movie.release_date?.split("-") || [];
+                return `${month}-${year}` === filterState.monthYear;
+            });
+        }
+
+        if (filterState.sortBy === "alphabet") {
+            filtered.sort((a, b) => a.title.localeCompare(b.title));
+        } else {
+            filtered.sort((a, b) => b.popularity - a.popularity);
+        }
+
+        return filtered;
     };
 
     const handleFilterChange = (e) => {
@@ -74,30 +88,42 @@ function Upcoming() {
     };
 
     const getAvailableFilterValues = () => {
-        const months = new Set();
-        const adult = new Set();
-        const langs = new Set();
+        const monthYears = new Set();
+        const today = dayjs();
 
-        movies.forEach(movie => {
-            const month = movie.release_date?.split("-")[1];
-            if (month) months.add(month);
-            adult.add(movie.adult ? "Yes" : "No");
-            langs.add(movie.original_language);
+        movies.forEach((movie) => {
+            const releaseDate = dayjs(movie.release_date);
+            if (releaseDate.isValid() && !releaseDate.isBefore(today, "day")) {
+                const month = releaseDate.format("MM");
+                const year = releaseDate.format("YYYY");
+                monthYears.add(`${month}-${year}`);
+            }
         });
 
-        const monthList = Array.from(months).sort().map(m => ({
-            value: m,
-            label: new Date(0, parseInt(m) - 1).toLocaleString('default', { month: 'long' })
-        }));
+        const monthList = Array.from(monthYears)
+            .sort((a, b) => new Date(`01-${a}`) - new Date(`01-${b}`))
+            .map((m) => {
+                const [month, year] = m.split("-");
+                const label = `${new Date(0, parseInt(month) - 1).toLocaleString("default", {
+                    month: "long",
+                })} ${year}`;
+                return {
+                    value: m,
+                    label,
+                };
+            });
 
         return {
-            months: monthList,
-            adult: Array.from(adult).sort(),
-            languages: Array.from(langs).sort()
+            monthYears: monthList,
         };
     };
 
-    const { months, adult, languages } = getAvailableFilterValues();
+    useEffect(() => {
+        fetchMovies();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const { monthYears } = getAvailableFilterValues();
 
     return (
         <div className="min-h-screen bg-black text-white pt-16 px-4">
@@ -109,43 +135,28 @@ function Upcoming() {
 
             {/* Filter Dropdowns */}
             <div className="flex flex-wrap justify-center gap-4 mb-6">
-                {/* Month */}
+                {/* Month-Year Filter */}
                 <select
-                    name="month"
-                    value={filters.month}
+                    name="monthYear"
+                    value={filters.monthYear}
                     onChange={handleFilterChange}
                     className="bg-gray-800 text-white px-4 py-2 rounded-md"
                 >
-                    <option value="">All Months</option>
-                    {months.map((m) => (
+                    <option value="">All Dates</option>
+                    {monthYears.map((m) => (
                         <option key={m.value} value={m.value}>{m.label}</option>
                     ))}
                 </select>
 
-                {/* Adult */}
+                {/* Sort By */}
                 <select
-                    name="adult"
-                    value={filters.adult}
+                    name="sortBy"
+                    value={filters.sortBy}
                     onChange={handleFilterChange}
                     className="bg-gray-800 text-white px-4 py-2 rounded-md"
                 >
-                    <option value="">All Ratings</option>
-                    {adult.map((a) => (
-                        <option key={a} value={a}>{a}</option>
-                    ))}
-                </select>
-
-                {/* Language */}
-                <select
-                    name="language"
-                    value={filters.language}
-                    onChange={handleFilterChange}
-                    className="bg-gray-800 text-white px-4 py-2 rounded-md"
-                >
-                    <option value="">All Languages</option>
-                    {languages.map((lang) => (
-                        <option key={lang} value={lang}>{lang.toUpperCase()}</option>
-                    ))}
+                    <option value="popularity">Sort by Popularity</option>
+                    <option value="alphabet">Sort Alphabetically</option>
                 </select>
             </div>
 
