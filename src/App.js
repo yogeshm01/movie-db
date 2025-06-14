@@ -10,6 +10,7 @@ import NavBar from './components/Navbar'; // Import the NavBar
 import MovieDetail from "./pages/MovieDetail";
 import SearchBar from "./components/SearchBar"; // Import the SearchBar
 import SearchResults from "./pages/SearchResult";
+import ActorDetail from "./pages/ActorDetail"; // Import the ActorDetail page
 
 function App() {
   return (
@@ -25,6 +26,8 @@ function App() {
           <Route path="/upcoming-movies" element={<Upcoming />} />
           <Route path="/watch-later" element={<WatchLater />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
+          <Route path="/actor/:id" element={<ActorDetail />} />
+
           <Route path="/search" element={<SearchResults />} />
           <Route path="/search" element={<SearchBar />} />
 
