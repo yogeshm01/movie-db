@@ -61,7 +61,7 @@ function Trending() {
   };
 
   return (
-      <div className="min-h-screen bg-[#0d0d0d] text-white px-6 py-10 sm:px-4 md:px-6 lg:px-10">
+      <div className="min-h-screen bg-black text-white pt-16 px-4">
           <h1 className="text-4xl font-bold text-cyan-400 text-center mb-6 pt-11 sm:text-3xl md:text-4xl lg:text-5xl">
               Trending Movies
           </h1>
