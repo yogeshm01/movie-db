@@ -1,12 +1,13 @@
 // src/components/MovieCard.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PlayIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { PlayIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 const AUTH = process.env.REACT_APP_TMDB_AUTHORIZATION;
 
 const MovieCard = ({ movie }) => {
   const [trailerUrl, setTrailerUrl] = useState(null);
+  const [inWatchlist, setInWatchlist] = useState(false);
 
   const roundedRating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
   const poster = movie.poster_path
@@ -17,41 +18,48 @@ const MovieCard = ({ movie }) => {
     : 'Unknown';
 
   useEffect(() => {
-    const fetchTrailer = async () => {
-      try {
-        const res = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos`, {
-          headers: {
-            accept: 'application/json',
-            Authorization: `Bearer ${AUTH}`,
-          },
-        });
+    const stored = JSON.parse(localStorage.getItem('watchLater')) || [];
+    const exists = stored.find((item) => item.id === movie.id);
+    setInWatchlist(!!exists);
+  }, [movie.id]);
 
-        const data = await res.json();
-        const trailer = data.results.find(
-          (vid) => vid.type === 'Trailer' && vid.site === 'YouTube'
-        );
-
-        if (trailer) {
-          setTrailerUrl(`https://www.youtube.com/watch?v=${trailer.key}`);
-        }
-      } catch (error) {
-        console.error('Error fetching trailer:', error);
+  const fetchTrailer = async () => {
+    try {
+      const res = await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/videos`, {
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${AUTH}`,
+        },
+      });
+      const data = await res.json();
+      const trailer = data.results.find(
+        (vid) => vid.type === 'Trailer' && vid.site === 'YouTube'
+      );
+      if (trailer) {
+        setTrailerUrl(`https://www.youtube.com/watch?v=${trailer.key}`);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching trailer:', error);
+    }
+  };
 
+  useEffect(() => {
     fetchTrailer();
   }, [movie.id]);
 
-  const addToWatchLater = () => {
+  const toggleWatchLater = () => {
     const stored = JSON.parse(localStorage.getItem('watchLater')) || [];
     const exists = stored.find((item) => item.id === movie.id);
-    if (!exists) {
-      stored.push(movie);
-      localStorage.setItem('watchLater', JSON.stringify(stored));
-      alert(`${movie.title} added to Watch Later!`);
+    let updated;
+    if (exists) {
+      updated = stored.filter((item) => item.id !== movie.id);
+      alert(`${movie.title} removed from Watch Later.`);
     } else {
-      alert(`${movie.title} is already in Watch Later.`);
+      updated = [...stored, movie];
+      alert(`${movie.title} added to Watch Later.`);
     }
+    localStorage.setItem('watchLater', JSON.stringify(updated));
+    setInWatchlist(!inWatchlist);
   };
 
   return (
@@ -76,11 +84,18 @@ const MovieCard = ({ movie }) => {
 
         <div className="mt-auto flex gap-2">
           <button
-            onClick={addToWatchLater}
+            onClick={toggleWatchLater}
             className="flex-1 flex items-center justify-center gap-1 bg-[#2d2d2d] text-white px-3 py-2 text-sm rounded hover:bg-[#3d3d3d] transition"
           >
-            <PlusIcon className="h-4 w-4" />
-            Watchlist
+            {inWatchlist ? (
+              <>
+                <XMarkIcon className="h-4 w-4" /> Remove
+              </>
+            ) : (
+              <>
+                <PlusIcon className="h-4 w-4" /> Watchlist
+              </>
+            )}
           </button>
 
           {trailerUrl ? (
