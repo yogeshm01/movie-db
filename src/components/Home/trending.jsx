@@ -37,7 +37,7 @@ function Trending() {
     return (
         <>
             {/* Heading */}
-            <div className="flex justify-center items-center mt-14 pt-8">
+            <div className="flex justify-center items-center mt-4 pt-3">
                 <h1 className="text-3xl font-bold text-[#00FFFF] p-4">Trending Movies</h1>
             </div>
 

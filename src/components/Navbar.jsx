@@ -1,8 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import { useState } from 'react';
+import { signInWithPopup, signOut } from 'firebase/auth';
+import { auth, provider } from "../firebase"; // Make sure this path is correct
 
-function NavBar() {
+
+function NavBar({user}) {
     const [query, setQuery] = useState('');
     const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
@@ -15,6 +18,22 @@ function NavBar() {
     };
 
     const toggleMenu = () => setMenuOpen(!menuOpen);
+
+    const handleLogin = async () => {
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            console.error("Google Sign-In Error:", error);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Logout Error:", error);
+        }
+    };
 
     return (
         <nav className="bg-[#121212] px-4 md:px-8 py-4 fixed top-0 left-0 right-0 z-50 shadow-md">
@@ -40,6 +59,28 @@ function NavBar() {
                     <li><Link to="/browse" className="hover:text-cyan-300 transition hover:scale-105">Browse</Link></li>
                     <li><Link to="/upcoming-movies" className="hover:text-cyan-300 transition hover:scale-105">Upcoming</Link></li>
                     <li><Link to="/watch-later" className="hover:text-cyan-300 transition hover:scale-105">Watch Later</Link></li>
+                    {user ? (
+                        <div className="flex items-center gap-3 ml-4">
+                            <img
+                                src={user.photoURL}
+                                alt={user.displayName}
+                                className="w-8 h-8 rounded-full object-cover border-2 border-cyan-300"
+                            />
+                            <button
+                                onClick={handleLogout}
+                                className="bg-red-600 px-3 py-1 rounded text-white hover:bg-red-700 text-sm"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={handleLogin}
+                            className="bg-cyan-500 px-3 py-1 rounded text-white hover:bg-cyan-600 text-sm"
+                        >
+                            Sign in
+                        </button>
+                    )}
                 </ul>
 
                 {/* Mobile Toggle */}
@@ -71,6 +112,36 @@ function NavBar() {
                     </ul>
                     <div className="mt-4">
                         <SearchBar />
+                    </div>
+                    <div className="mt-4">
+                        {user ? (
+                            <div className="flex items-center justify-between gap-4">
+                                <img
+                                    src={user.photoURL}
+                                    alt={user.displayName}
+                                    className="w-8 h-8 rounded-full object-cover border-2 border-cyan-300"
+                                />
+                                <button
+                                    onClick={() => {
+                                        handleLogout();
+                                        setMenuOpen(false);
+                                    }}
+                                    className="bg-red-600 px-3 py-1 rounded text-white hover:bg-red-700 text-sm"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => {
+                                    handleLogin();
+                                    setMenuOpen(false);
+                                }}
+                                className="bg-cyan-500 px-3 py-1 rounded text-white hover:bg-cyan-600 text-sm w-full"
+                            >
+                                Sign in
+                            </button>
+                        )}
                     </div>
                 </div>
             )}
