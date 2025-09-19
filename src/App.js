@@ -11,7 +11,7 @@ import SearchBar from "./components/SearchBar";
 import SearchResults from "./pages/SearchResult";
 import ActorDetail from "./pages/ActorDetail"; 
 
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, getRedirectResult } from "firebase/auth";
 import { auth } from "./firebase"; 
 
 
@@ -28,6 +28,20 @@ function App() {
         console.log("No user is signed in.");
       }
     });
+
+    // If the app was redirected back from a provider sign-in, getRedirectResult
+    // resolves with the OAuth credential and user info. This is necessary because
+    // signInWithRedirect doesn't return a result in the click handler.
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          console.log("Redirect sign-in result:", result);
+          if (result.user) setUser(result.user);
+        }
+      })
+      .catch((err) => {
+        console.error("getRedirectResult error:", err);
+      });
 
     return () => unsubscribe(); // Cleanup listener on unmount
   }, []);

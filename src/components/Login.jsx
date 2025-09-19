@@ -1,15 +1,19 @@
 import React from "react";
-import { signInWithRedirect } from "firebase/auth";
+import { signInWithRedirect, signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../firebase";
 
 export default function Login() {
   const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithRedirect(auth, provider);
-      const user = result.user;
-      console.log("Signed in user:", user);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
-      console.error("Google sign-in error:", error);
+      console.error("Google sign-in (redirect) error:", error);
+      try {
+        const result = await signInWithPopup(auth, provider);
+        console.log("Signed in with popup, user:", result.user);
+      } catch (popupError) {
+        console.error("Google sign-in (popup) error:", popupError);
+      }
     }
   };
 
