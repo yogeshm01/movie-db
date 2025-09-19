@@ -10,6 +10,7 @@ import MovieDetail from "./pages/MovieDetail";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./pages/SearchResult";
 import ActorDetail from "./pages/ActorDetail"; 
+import AuthPopup from "./pages/AuthPopUp";
 
 import { onAuthStateChanged, getRedirectResult } from "firebase/auth";
 import { auth } from "./firebase"; 
@@ -56,6 +57,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home user={user}/>} /> 
           <Route path="/trending" element={<Trending />} />
+          <Route path="/auth-popup" element={<AuthPopup />} />
           <Route path="/browse" element={<Browse />} />
           <Route path="/upcoming-movies" element={<Upcoming />} />
           <Route path="/watch-later" element={<WatchLater />} />
