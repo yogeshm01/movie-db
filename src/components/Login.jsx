@@ -1,10 +1,17 @@
-// In Login.jsx
-
 export default function Login() {
-  const handleGoogleSignIn = () => {
-    const authWindow = window.open("/auth-popup", "_blank", "width=500,height=600");
-    if (!authWindow) {
-      alert("Popup blocked! Please allow popups for this site.");
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      console.log("Signed in with popup:", result.user);
+      return;
+    } catch (popupErr) {
+      console.warn("Popup sign-in failed or blocked, falling back to redirect:", popupErr);
+    }
+
+    try {
+      await signInWithRedirect(auth, provider);
+    } catch (redirectErr) {
+      console.error("Redirect sign-in failed:", redirectErr);
     }
   };
 
